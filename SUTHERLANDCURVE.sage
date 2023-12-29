@@ -92,7 +92,6 @@ def A(ND,E,primes,w):
             j=j+1
         P=P*p**j
     return P
-#Шаг младенца
 for j in range(0,b):
     if gcd(j,Pw):
         B=j*beta
