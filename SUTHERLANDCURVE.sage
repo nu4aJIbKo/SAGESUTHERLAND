@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[14]:
-
-
 import time
 start = time.time()
 def HEC_random_point(C):
@@ -37,7 +31,7 @@ def JC_random_element(C):
     v = f.parent().lagrange_polynomial(points)
     print('u,v= ', [u,v])
     return J([u, v])
-q = Primes().next(2^(12) +1)
+q =Primes().next(2^(16)+24)
 print('q= ' ,q)
 K = GF(q)
 R.<x> = K[]
@@ -55,11 +49,13 @@ primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67
           397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467,
           479, 487, 491, 499, 503, 509, 521, 523, 541]
 g=3
-M = floor(((sqrt(q) + 1)**2)**g)
+M1=floor(((sqrt(q) + 1)**2)**g)
+M=2^27
 w=1
 Pw=2
 phi_pw=1
 pw=2
+#Функция праймориал
 def primorials(primes, w):
     primes = primes[:w]
     pw = primes[-1]
@@ -75,48 +71,53 @@ w=w-1
 primorials(primes, w)
 pw, Pw, phi_pw = primorials(primes, w)
 m=floor(sqrt(M//(Pw*phi_pw)))
+print('Pw-',Pw)
 b=m*Pw
 print('b- ', b)
+#print('Pw-' ,Pw)
 primes=primes[:w]
 #print('primes- ', primes)
 E = prod([p^floor(log(M, p)) for p in primes])
-print("E=", factor(E))
+print("E=", E,factor(E))
 beta=E*D
 print('beta- ', beta)
-B_j={}
-#Быстрый алгорим A(AN,E)
+#Классический алгоритм A(AN,E)
 def A(ND,E,primes,w):
     primes=primes[:w]
     S_i=1
     S=1
     for p in primes:
-        
         D_i=(E//prod([p^floor(log(M, p))]))*ND
-       # print(factor(E//prod([p^floor(log(M, p))])))
+        #print('D_i-',D_i)
+        #print(factor(E//prod([p^floor(log(M, p))])))
         while list(D_i) != list(C.jacobian()(0)):
             D_i=p*D_i
+            #print('D_i',D_i)
             S_i=S_i*p
         S=S*S_i
         S_i=1
     print("S=",S)    
     return(S)
-for i  in range(0,b):
-    B_j[i]=0
-    
 #Шаг младенца
 print("Шаг_младенца")
+d = {}
+for i in range(0,b):
+    d[tuple(D)]=0
 for j in range(0,b):
     if gcd(j,Pw)==1:
-        B=j*beta
-        B_j[j]=B
-        if list(B)==list(C.jacobian()(0)):
-            N=j
-            print('N- ', N)
-            h=A(N*D,E,primes,w)
-            print('h- ', h)
-            print('N- ',N)
-            print('порядок- ', h*N)
-            break
+        X=j*beta
+        #print('X=',X)
+        d[tuple(X)]=j
+        #print(d)
+for key, j in d.items():
+    if list(key) == list(J(0)):
+        N = j
+        h=A(N*D,E,primes,w)
+        print('h- ', h)
+        print('N- ',N)
+        print('порядок- ', h*N)
+        print('Найден в Шаг_младенца за',time.time() - start)
+        break
 #Шаг гиганта   
 print("Шаг_Гиганта")
 G=0
@@ -126,27 +127,24 @@ j=1
 while I !=G:
     B_i=i*b*beta
     #print("B_i=",B_i)
-    for j in range(0,b):
-        #print("j=",j)
-        if B_i==B_j[j]:
-            N=i*b-j
-            print("j=",j)
-            print("i*b=",i*b)
+    for key, j in d.items():
+        if list(key)==list(B_i):
+            N = i*b-j
+            #print("j=",j)
+            #print("i*b=",i*b)
             print('N- ',N)
             h=A(N*D,E,primes,w)
-            print('h- ', h)
+            #print('h- ', h)
             print('порядок- ', h*N)
+            print('Найден в Шаг_гиганта за',time.time() - start)
             G=I
             break
     i=i+1
+    print(i)
 print(time.time() - start)
 if list(J(0))==list(D*h*N):
     print("true")
 print("end__end")
-
-
-# In[ ]:
-
 
 
 
