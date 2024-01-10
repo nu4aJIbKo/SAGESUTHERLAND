@@ -31,7 +31,10 @@ def JC_random_element(C):
     v = f.parent().lagrange_polynomial(points)
     print('u,v= ', [u,v])
     return J([u, v])
-q =Primes().next(2^(16)+24)
+q = Primes().next(2^(25)+24)
+#q = Primes().next(2^(20)+30)
+q = Primes().next(2^(30)+24)
+q =33554467
 print('q= ' ,q)
 K = GF(q)
 R.<x> = K[]
@@ -50,7 +53,7 @@ primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67
           479, 487, 491, 499, 503, 509, 521, 523, 541]
 g=3
 M1=floor(((sqrt(q) + 1)**2)**g)
-M=2^27
+M=2^31
 w=1
 Pw=2
 phi_pw=1
@@ -109,15 +112,15 @@ for j in range(0,b):
         #print('X=',X)
         d[tuple(X)]=j
         #print(d)
-for key, j in d.items():
-    if list(key) == list(J(0)):
-        N = j
-        h=A(N*D,E,primes,w)
-        print('h- ', h)
-        print('N- ',N)
-        print('порядок- ', h*N)
-        print('Найден в Шаг_младенца за',time.time() - start)
-        break
+
+if tuple(J(0)) in d:
+    j = d[tuple(J(0))]
+    N = j
+    h=A(N*D,E,primes,w)
+    print('h- ', h)
+    print('N- ',N)
+    print('порядок- ', h*N)
+    print('Найден в Шаг_младенца за',time.time() - start)
 #Шаг гиганта   
 print("Шаг_Гиганта")
 G=0
@@ -127,24 +130,32 @@ j=1
 while I !=G:
     B_i=i*b*beta
     #print("B_i=",B_i)
-    for key, j in d.items():
-        if list(key)==list(B_i):
-            N = i*b-j
-            #print("j=",j)
-            #print("i*b=",i*b)
-            print('N- ',N)
-            h=A(N*D,E,primes,w)
-            #print('h- ', h)
-            print('порядок- ', h*N)
-            print('Найден в Шаг_гиганта за',time.time() - start)
-            G=I
-            break
+    if tuple(B_i) in d:
+        j = d[tuple(B_i)]
+        N = i*b-j
+        #print("j=",j)
+        #print("i*b=",i*b)
+        print('N- ',N)
+        h=A(N*D,E,primes,w)
+        #print('h- ', h)
+        print('порядок- ', h*N)
+        print('Найден в Шаг_гиганта за',time.time() - start)
+        G=I
+        break
     i=i+1
-    print(i)
+    #print(i)
 print(time.time() - start)
 if list(J(0))==list(D*h*N):
     print("true")
 print("end__end")
+
+
+
+
+
+
+
+
 
 
 
